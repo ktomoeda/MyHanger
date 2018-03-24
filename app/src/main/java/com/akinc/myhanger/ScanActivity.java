@@ -1,10 +1,16 @@
 package com.akinc.myhanger;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
+
+import java.util.Calendar;
+
 
 public class ScanActivity extends AppCompatActivity {
 
