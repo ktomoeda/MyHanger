@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.microblink.barcode"
+        minSdkVersion 16
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 20
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            signingConfig = debug.signingConfig
+        }
+    }
+
+    // to reduce the size of the final app, we recommend building 3 versions of your app, each
+    // built with single native architecture.
+    // If size is not problem, then it's easier to pack all architectures into a single apk.
+
+/*    productFlavors {
+        x86 {
+            ndk {
+                abiFilter "x86"
+            }
+        }
+        armv7 {
+            ndk {
+                abiFilter "armeabi-v7a"
+            }
+        }
+        arm {
+            ndk {
+                abiFilter "armeabi"
+            }
+        }
+    }
+    */
+}
+
+dependencies {
+    implementation ("com.microblink:pdf417.mobi:${rootProject.ext.pdf417MobiVersion}@aar") {
+        transitive = true
+    }
+}

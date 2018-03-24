@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Pdf417 Custom UI Demo</string>
+    <string name="custom_ui_roi">Custom camera activity with ROI</string>
+	<string name="custom_ui">Custom camera activity</string>
+    <string name="default_ui_no_dialog">Default overlay in fragment</string>
+    <string name="default_ui_no_logo">Default activity</string>
+    <string name="UseWith">Use with</string>
+    <string name="Back">Back</string>
+    <string name="LightOff">Light: off</string>
+    <string name="LightOn">Light: on</string>
+
+</resources>
