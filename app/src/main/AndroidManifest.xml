@@ -25,7 +25,8 @@
         <activity android:name=".MapActivity" />
         <activity android:name=".AchievementActivity" />
         <activity android:name=".LogActivity" />
-        <activity android:name=".PlaneActivity"></activity>
+        <activity android:name=".PlaneActivity" />
+        <activity android:name=".ManualActivity"></activity>
     </application>
 
 </manifest>
