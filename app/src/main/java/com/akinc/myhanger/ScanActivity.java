@@ -1,8 +1,10 @@
 package com.akinc.myhanger;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.util.Log;
 import android.widget.TextView;
 
@@ -31,6 +33,9 @@ import java.util.Date;
 import javax.net.ssl.HttpsURLConnection;
 
 import static java.lang.Integer.parseInt;
+=======
+import android.view.View;
+>>>>>>> e45ea87b47f3e0d2120eae0931d0219905bc779b
 
 public class ScanActivity extends AppCompatActivity {
 
