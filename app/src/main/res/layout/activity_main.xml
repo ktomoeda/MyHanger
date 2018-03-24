@@ -8,63 +8,64 @@
 
     <ImageButton
         android:id="@+id/achieve"
-        android:onClick="onClick"
-        android:layout_width="200px"
-        android:layout_height="200px"
-        android:scaleType="centerCrop"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:background="@null"
-        app:srcCompat="@drawable/trophy"
+        android:onClick="onClick"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".5"
-        app:layout_constraintHorizontal_bias=".5"/>
+        app:layout_constraintVertical_bias="0.98"
+        app:srcCompat="@drawable/trophy" />
 
     <!-- BOTTOM ICON LAYOUT -->
     <ImageButton
         android:id="@+id/camera"
-        android:onClick="onClick"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="71dp"
+        android:layout_height="74dp"
         android:background="@null"
+        android:onClick="onClick"
         android:scaleType="centerCrop"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/camera" />
 
     <ImageButton
         android:id="@+id/map"
-        android:onClick="onClick"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@null"
+        android:onClick="onClick"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintHorizontal_bias="0.257"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_bias="0.98"
         app:srcCompat="@drawable/map" />
 
     <ImageButton
         android:id="@+id/log"
-        android:onClick="onClick"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@null"
+        android:onClick="onClick"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintHorizontal_bias="0.757"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_bias="0.98"
         app:srcCompat="@drawable/document" />
 
     <TextView
@@ -79,6 +80,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintHorizontal_bias="0"/>
+
+    <ImageButton
+        android:id="@+id/home"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/home"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="507dp" />
     <!-- end of bottom icon layout-->
 
 </android.support.constraint.ConstraintLayout>

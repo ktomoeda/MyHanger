@@ -96,4 +96,13 @@
         app:layout_constraintVertical_bias=".6"
         app:layout_constraintHorizontal_bias=".5" />
 
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        tools:layout_editor_absoluteX="18dp"
+        tools:layout_editor_absoluteY="114dp" />
+
+
 </android.support.constraint.ConstraintLayout>
