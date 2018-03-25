@@ -27,10 +27,15 @@
         android:layout_height="21dp"
         android:text="Log Page"
         android:background="@null"
+
+
+    <LinearLayout
+        android:id="@+id/ilist"
+        android:layout_width="368dp"
+        android:layout_height="551dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

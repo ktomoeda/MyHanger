@@ -3,7 +3,14 @@ package com.akinc.myhanger;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onClick(View v) {
+    public void onClick(View v) throws IOException {
         switch(v.getId()) {
             case R.id.achieve:
                 Intent i = new Intent(this, AchievementActivity.class);
