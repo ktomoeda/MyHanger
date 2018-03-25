@@ -29,4 +29,6 @@ dependencies {
     implementation files('libs/jsoup-1.11.2.jar')
     compile 'com.googlecode.json-simple:json-simple:1.1'
     implementation 'com.google.android.gms:play-services-maps:12.0.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'joda-time:joda-time:2.9.4'
 }
