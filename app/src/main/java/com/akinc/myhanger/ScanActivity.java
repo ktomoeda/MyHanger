@@ -1,16 +1,24 @@
 package com.akinc.myhanger;
 
+import android.app.DatePickerDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerBuilder;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,6 +32,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Calendar;
+
 import static java.lang.Integer.parseInt;
 
 public class ScanActivity extends AppCompatActivity {
@@ -34,7 +44,73 @@ public class ScanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scan);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        new TicketScanner().execute();
+        startScan();
+
+        //new TicketScanner().execute();
+    }
+
+    /**
+     * Static class used for passing parameters when webscrapping
+     */
+    private static class MyTaskParams {
+        String flightNum;
+        int year;
+        int month;
+        int day;
+        MyTaskParams(String givenFlightNum, int givenYear, int givenMonth, int givenDay) {
+            this.flightNum = givenFlightNum;
+            this.year = givenYear;
+            this.month = givenMonth;
+            this.day = givenDay;
+        }
+    }
+
+    private void startScan() {
+        /**
+         * Build a new MaterialBarcodeScanner
+         */
+        final MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
+                .withActivity(ScanActivity.this)
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withText("Scanning...")
+                .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        String[] rawData = barcode.displayValue.split(" +");
+                        String airline = rawData[2].substring(6, 8);
+                        String flightNum = airline+rawData[3].replaceFirst("^0*", "");;
+                        fetchInputDate(flightNum);
+                    }
+                })
+                .build();
+        materialBarcodeScanner.startScan();
+    }
+
+    private void fetchInputDate(final String flightNum) {
+
+        final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                MyTaskParams params = new MyTaskParams(flightNum, year, month, day);
+                new TicketScanner().execute(params);
+            }
+        };
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dialog = new DatePickerDialog(
+                ScanActivity.this,
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                mDateSetListener,
+                year,month,day);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     /**
@@ -43,7 +119,7 @@ public class ScanActivity extends AppCompatActivity {
      * option to save this plane into their personal "hanger".
      */
 
-    class TicketScanner extends AsyncTask<String, String, String[]> {
+    class TicketScanner extends AsyncTask<MyTaskParams, String, String[]> {
         ProgressBar progressBar = findViewById(R.id.progressBar);
         TextView progressText = findViewById(R.id.progressText);
 
@@ -57,15 +133,20 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String[] doInBackground(String... args) {
+        protected String[] doInBackground(MyTaskParams... params) {
             try {
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
-                String tempFlightNo = "ke623"; //***DELETE WHEN BARCODE WORKING
-                int[] tempDate = {2018,3,24}; //***DELETE WHEN BARCODE WORKING
+                String flightNo = params[0].flightNum;
+                int[] tempDate = {params[0].year,params[0].month,params[0].day};
+                Log.d("Test","tttt");
+                Log.d("Test",flightNo);
+                Log.d("Test",Integer.toString(tempDate[0]));
+                Log.d("Test",Integer.toString(tempDate[1]));
+                Log.d("Test",Integer.toString(tempDate[2]));
                 //  First, find the tail #
                 publishProgress("Fetching plane tail number...");
-                String tailno = fetchTailNum(tempFlightNo, tempDate);
+                String tailno = fetchTailNum(flightNo, tempDate);
                 progressBar.setProgress(30);
                 // Second, find the plane model #
                 publishProgress("Fetching plane model...");
