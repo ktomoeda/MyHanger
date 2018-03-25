@@ -31,6 +31,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent l = new Intent(this, LogActivity.class);
                 startActivity(l);
                 break;
+            case R.id.home:
+                Intent m = new Intent(this, MainActivity.class);
+                startActivity(m);
+                break;
+            case R.id.manual:
+                Intent n = new Intent(this, ManualActivity.class);
+                startActivity(n);
+                break;
         }
     }
 }

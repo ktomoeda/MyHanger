@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.akinc.myhanger.PlaneActivity">
+
+    <ImageView
+        android:id="@+id/b737_800"
+        android:layout_width="350dp"
+        android:layout_height="240dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias=".2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:srcCompat="@drawable/b737" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="355dp"
+        android:layout_height="208dp"
+        android:text="Boeing 737-800 REG: N766AA DATE:MAR01,2018 FL# UA001 O:DSM D:ORD "
+        tools:layout_editor_absoluteX="15dp"
+        tools:layout_editor_absoluteY="318dp" />
+
+</android.support.constraint.ConstraintLayout>
+
+
