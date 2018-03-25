@@ -1,10 +1,13 @@
 package com.akinc.myhanger;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -26,17 +29,28 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 
 public class ScanActivity extends AppCompatActivity {
+
+    //Used for saving data to the local storage
+    private String[] exportString = new String[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +59,23 @@ public class ScanActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         startScan();
+    }
 
-        //new TicketScanner().execute();
+    public void onClick(View v) throws IOException {
+        switch(v.getId()) {
+            case R.id.addHanger:
+                //Store the data as a file
+                String filename = exportString[4]+exportString[2];
+                String fileContents = exportString[0]+"\n"+exportString[1]+"\n"
+                +exportString[2]+"\n"+exportString[3]+"\n"+exportString[4]+"\n"+exportString[5];
+                Log.d("Test",fileContents);
+                FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                fos.write(fileContents.getBytes());
+                fos.close();
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
+                break;
+        }
     }
 
     /**
@@ -79,6 +108,8 @@ public class ScanActivity extends AppCompatActivity {
                     @Override
                     public void onResult(Barcode barcode) {
                         String[] rawData = barcode.displayValue.split(" +");
+                        exportString[0] = rawData[2].substring(0,3);
+                        exportString[1] = rawData[2].substring(3,6);
                         String airline = rawData[2].substring(6, 8);
                         String flightNum = airline+rawData[3].replaceFirst("^0*", "");;
                         fetchInputDate(flightNum);
@@ -94,6 +125,7 @@ public class ScanActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
+                exportString[4] = Integer.toString(day)+"-"+Integer.toString(month)+"-"+Integer.toString(year);
                 MyTaskParams params = new MyTaskParams(flightNum, year, month, day);
                 new TicketScanner().execute(params);
             }
@@ -138,15 +170,12 @@ public class ScanActivity extends AppCompatActivity {
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
                 String flightNo = params[0].flightNum;
+                exportString[2] = flightNo;
                 int[] tempDate = {params[0].year,params[0].month,params[0].day};
-                Log.d("Test","tttt");
-                Log.d("Test",flightNo);
-                Log.d("Test",Integer.toString(tempDate[0]));
-                Log.d("Test",Integer.toString(tempDate[1]));
-                Log.d("Test",Integer.toString(tempDate[2]));
                 //  First, find the tail #
                 publishProgress("Fetching plane tail number...");
                 String tailno = fetchTailNum(flightNo, tempDate);
+                exportString[3] = tailno;
                 progressBar.setProgress(30);
                 // Second, find the plane model #
                 publishProgress("Fetching plane model...");
@@ -279,6 +308,7 @@ public class ScanActivity extends AppCompatActivity {
             String firstResult = doc3.select("ul.mw-search-results").select("li").get(0).select("div.mw-search-result-heading").select("a").get(0).attr("abs:href");
             Document doc4 = Jsoup.connect(firstResult).get();
             if(doc4.select("table.infobox.vcard.vevent").size()==0) {
+                exportString[5] = "0";
                 return "No previous accidents to report";
             } else {
                 if(doc4.select("table.infobox.vcard.vevent").select("tr").size()>13) {
@@ -295,16 +325,20 @@ public class ScanActivity extends AppCompatActivity {
                         for (Element para : accidentDesc.select("p")) {
                             sb.append(para.text()+"\n\n");
                             if(para.text().length()==0) {
+                                exportString[5] = "1";
                                 return sb.toString();
                             }
                         }
                     } else {
+                        exportString[5] = "0";
                         return "No previous accidents to report";
                     }
                 } else {
+                    exportString[5] = "0";
                     return "No previous accidents to report";
                 }
             }
+            exportString[5] = "0";
             return "No previous accidents to report";
         }
 
@@ -313,6 +347,8 @@ public class ScanActivity extends AppCompatActivity {
         {
             progressBar.setVisibility(View.INVISIBLE);
             progressText.setVisibility(View.INVISIBLE);
+            TextView v0 = findViewById(R.id.addHanger);
+            v0.setVisibility(View.VISIBLE);
             //Insert plane registration #
             TextView v = findViewById(R.id.aircraftReg);
             v.setText(result[0]);

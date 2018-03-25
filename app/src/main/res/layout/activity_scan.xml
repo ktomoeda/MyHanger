@@ -6,49 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.akinc.myhanger.ScanActivity">
 
-    <!-- BOTTOM ICON LAYOUT -->
-    <ImageButton
-        android:id="@+id/camera"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/camera" />
-
-    <ImageButton
-        android:id="@+id/map"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/map" />
-
-    <ImageButton
-        android:id="@+id/log"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/document" />
-
     <ImageView
         android:id="@+id/planeImg"
         android:layout_width="300dp"
@@ -57,8 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".2"
-        app:layout_constraintHorizontal_bias=".5" />
+        app:layout_constraintVertical_bias="0.125" />
 
 
     <TextView
@@ -66,78 +22,26 @@
         android:layout_width="150dp"
         android:layout_height="20dp"
         android:text=""
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.858"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".45"
-        app:layout_constraintHorizontal_bias=".8"/>
+        app:layout_constraintVertical_bias="0.499" />
 
     <TextView
         android:id="@+id/planeModel"
-        android:layout_width="200dp"
+        android:layout_width="170dp"
         android:layout_height="20dp"
         android:text=""
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.086"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".45"
-        app:layout_constraintHorizontal_bias=".2" />
-
-    <TextView
-        android:id="@+id/planeAccident"
-        android:layout_width="350dp"
-        android:layout_height="280dp"
-        android:text=""
-        android:textAlignment="inherit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.857" />
-
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="114dp" />
-
-    <Button
-        android:id="@+id/manual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manual Input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.063" />
-
-
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="114dp" />
-
-    <Button
-        android:id="@+id/manual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manual Input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.063" />
-
+        app:layout_constraintVertical_bias="0.499" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -151,8 +55,7 @@
         app:layout_constraintVertical_bias=".6"
         app:layout_constraintHorizontal_bias=".5"
         android:minHeight="20dip"
-        android:minWidth="200dip"
-        />
+        android:minWidth="200dip" />
 
     <TextView
         android:id="@+id/progressText"
@@ -167,5 +70,51 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias=".5"
         app:layout_constraintHorizontal_bias=".5" />
+
+    <ScrollView
+        android:layout_width="239dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.668">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            >
+
+            <TextView
+                android:id="@+id/planeAccident"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:text=""
+                android:textAlignment="inherit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.857" />
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/addHanger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:text="Add to hangar"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.849" />
 
 </android.support.constraint.ConstraintLayout>
