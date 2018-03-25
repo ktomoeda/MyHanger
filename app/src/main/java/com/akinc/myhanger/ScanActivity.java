@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-
 import static java.lang.Integer.parseInt;
 
 public class ScanActivity extends AppCompatActivity {
@@ -63,8 +62,8 @@ public class ScanActivity extends AppCompatActivity {
                 Log.d("Test","0");
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
-                String tempFlightNo = "af65"; //***DELETE WHEN BARCODE WORKING
-                int[] tempDate = {2018,3,22}; //***DELETE WHEN BARCODE WORKING
+                String tempFlightNo = "ke623"; //***DELETE WHEN BARCODE WORKING
+                int[] tempDate = {2018,3,24}; //***DELETE WHEN BARCODE WORKING
                 //  First, find the tail #
                 publishProgress("Fetching plane tail number...");
                 String tailno = fetchTailNum(tempFlightNo, tempDate);
