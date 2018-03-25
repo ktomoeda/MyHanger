@@ -16,21 +16,9 @@ public class MapActivity extends AppCompatActivity {
 
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.achieve:
-                Intent i = new Intent(this, AchievementActivity.class);
-                startActivity(i);
-                break;
-            case R.id.camera:
-                Intent j = new Intent(this, ScanActivity.class);
-                startActivity(j);
-                break;
-            case R.id.map:
-                Intent k = new Intent(this, MapActivity.class);
-                startActivity(k);
-                break;
-            case R.id.log:
-                Intent l = new Intent(this, LogActivity.class);
-                startActivity(l);
+            case R.id.homebutton:
+                Intent m = new Intent(this, MainActivity.class);
+                startActivity(m);
                 break;
         }
     }

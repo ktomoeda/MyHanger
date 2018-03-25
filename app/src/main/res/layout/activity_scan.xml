@@ -7,47 +7,6 @@
     tools:context="com.akinc.myhanger.ScanActivity">
 
     <!-- BOTTOM ICON LAYOUT -->
-    <ImageButton
-        android:id="@+id/camera"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/camera" />
-
-    <ImageButton
-        android:id="@+id/map"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/map" />
-
-    <ImageButton
-        android:id="@+id/log"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/document" />
 
     <ImageView
         android:id="@+id/planeImg"
@@ -63,15 +22,17 @@
 
     <TextView
         android:id="@+id/aircraftReg"
-        android:layout_width="150dp"
-        android:layout_height="20dp"
+        android:layout_width="179dp"
+        android:layout_height="36dp"
         android:text=""
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.165"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".45"
-        app:layout_constraintHorizontal_bias=".8"/>
+        app:layout_constraintVertical_bias="0.062" />
 
     <TextView
         android:id="@+id/planeModel"
@@ -104,19 +65,6 @@
         android:visibility="invisible"
         tools:layout_editor_absoluteX="18dp"
         tools:layout_editor_absoluteY="114dp" />
-
-    <Button
-        android:id="@+id/manual"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Manual Input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.063" />
-
 
     <CalendarView
         android:id="@+id/calendarView"
@@ -167,5 +115,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias=".5"
         app:layout_constraintHorizontal_bias=".5" />
+
+    <Button
+        android:id="@+id/buttonClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:visibility="invisible"/>
+
+    <ImageButton
+        android:id="@+id/homebutton"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/hangar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
 
 </android.support.constraint.ConstraintLayout>

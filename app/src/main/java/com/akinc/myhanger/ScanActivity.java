@@ -1,6 +1,9 @@
 package com.akinc.myhanger;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -135,11 +138,11 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(MyTaskParams... params) {
             try {
+                Log.d("Test","hello?");
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
                 String flightNo = params[0].flightNum;
                 int[] tempDate = {params[0].year,params[0].month,params[0].day};
-                Log.d("Test","tttt");
                 Log.d("Test",flightNo);
                 Log.d("Test",Integer.toString(tempDate[0]));
                 Log.d("Test",Integer.toString(tempDate[1]));
@@ -148,6 +151,10 @@ public class ScanActivity extends AppCompatActivity {
                 publishProgress("Fetching plane tail number...");
                 String tailno = fetchTailNum(flightNo, tempDate);
                 progressBar.setProgress(30);
+                Log.d("Test",tailno);
+                if(tailno==null) {
+                    return null;
+                }
                 // Second, find the plane model #
                 publishProgress("Fetching plane model...");
                 String modelno = fetchModelNum(tailno);
@@ -311,27 +318,39 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] result)
         {
-            progressBar.setVisibility(View.INVISIBLE);
-            progressText.setVisibility(View.INVISIBLE);
-            //Insert plane registration #
-            TextView v = findViewById(R.id.aircraftReg);
-            v.setText(result[0]);
-            //Insert plane model #
-            TextView v2 = findViewById(R.id.planeModel);
-            v2.setText(result[1]);
-            //Insert plane picture
-            ImageView iv = findViewById(R.id.planeImg);
-            InputStream is = null;
-            try {
-                is = new URL(result[2]).openStream();
-            } catch (IOException e) {
-                e.printStackTrace();
+            Log.d("Test","111"+result);
+            if(result==null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Message")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                           public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                builder.show();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+                progressText.setVisibility(View.INVISIBLE);
+                //Insert plane registration #
+                TextView v = findViewById(R.id.aircraftReg);
+                v.setText(result[0]);
+                //Insert plane model #
+                TextView v2 = findViewById(R.id.planeModel);
+                v2.setText(result[1]);
+                //Insert plane picture
+                ImageView iv = findViewById(R.id.planeImg);
+                InputStream is = null;
+                try {
+                    is = new URL(result[2]).openStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Bitmap planeImg = BitmapFactory.decodeStream(is);
+                iv.setImageBitmap(planeImg);
+                //Insert plane accident report (if there is one)
+                TextView v3 = findViewById(R.id.planeAccident);
+                v3.setText(result[3]);
             }
-            Bitmap planeImg = BitmapFactory.decodeStream(is);
-            iv.setImageBitmap(planeImg);
-            //Insert plane accident report (if there is one)
-            TextView v3 = findViewById(R.id.planeAccident);
-            v3.setText(result[3]);
         }
 
     }
