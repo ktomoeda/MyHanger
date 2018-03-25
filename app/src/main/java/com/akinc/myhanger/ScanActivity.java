@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-
 import static java.lang.Integer.parseInt;
 
 public class ScanActivity extends AppCompatActivity {
