@@ -59,7 +59,6 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(String... args) {
             try {
-                Log.d("Test","0");
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
                 String tempFlightNo = "ke623"; //***DELETE WHEN BARCODE WORKING
@@ -86,8 +85,6 @@ public class ScanActivity extends AppCompatActivity {
                 progressBar.setProgress(100);
                 return planeData;
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                // If the web scrapper failed to find something...
                 e.printStackTrace();
             }
             return null;
@@ -131,7 +128,6 @@ public class ScanActivity extends AppCompatActivity {
                     LocalDate tempDate = fetchLocalDate(fetchedDate, fetchedTime, apc);
                     if (tempDate.equals(inputDate)) { //Change to input from barcode
                         String[] tempString = tds.get(4).text().split(" ");
-                        Log.d("Test","Found matching model on "+tempDate.toString());
                         return tempString[1];
                     }
                 }
@@ -164,13 +160,10 @@ public class ScanActivity extends AppCompatActivity {
             //Scale back the time and see if the date should stay the same, be set back or move forward
             int localTime = timeUTC + utcDiff;
             if(localTime<0) { //Go back a day
-                //Log.d("Test","Going back a day...");
                 localDate = localDate.minusDays(1);
             } else if(localTime>2400) { //Go forward a day
-                //Log.d("Test","Going forward a day...");
                 localDate.plusDays(1);
             } else { //Stay in the say day
-                //Log.d("Test","Same day...");
             }
             return localDate;
         }
@@ -208,7 +201,13 @@ public class ScanActivity extends AppCompatActivity {
                 return "No previous accidents to report";
             } else {
                 if(doc4.select("table.infobox.vcard.vevent").select("tr").size()>13) {
-                    String registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(12).select("td").get(0).text();
+                    String registration;
+                    String accidentType = doc4.select("table.infobox.vcard.vevent").select("tr").get(1).select("th").text();
+                    if(accidentType.equals("Hijacking summary")) {
+                        registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(11).select("td").get(0).text().split("\\[")[0];
+                    } else {
+                        registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(12).select("td").get(0).text().split("\\[")[0];
+                    }
                     if(registration.equals(tailno)) {
                         Elements accidentDesc = doc4.select("div.mw-parser-output");
                         StringBuilder sb = new StringBuilder();
