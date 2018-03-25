@@ -1,14 +1,27 @@
 package com.akinc.myhanger;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScanner;
+import com.edwardvanraak.materialbarcodescanner.MaterialBarcodeScannerBuilder;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,6 +35,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Calendar;
+
 import static java.lang.Integer.parseInt;
 
 public class ScanActivity extends AppCompatActivity {
@@ -32,7 +47,73 @@ public class ScanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scan);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        new TicketScanner().execute();
+        startScan();
+
+        //new TicketScanner().execute();
+    }
+
+    /**
+     * Static class used for passing parameters when webscrapping
+     */
+    private static class MyTaskParams {
+        String flightNum;
+        int year;
+        int month;
+        int day;
+        MyTaskParams(String givenFlightNum, int givenYear, int givenMonth, int givenDay) {
+            this.flightNum = givenFlightNum;
+            this.year = givenYear;
+            this.month = givenMonth;
+            this.day = givenDay;
+        }
+    }
+
+    private void startScan() {
+        /**
+         * Build a new MaterialBarcodeScanner
+         */
+        final MaterialBarcodeScanner materialBarcodeScanner = new MaterialBarcodeScannerBuilder()
+                .withActivity(ScanActivity.this)
+                .withEnableAutoFocus(true)
+                .withBleepEnabled(true)
+                .withBackfacingCamera()
+                .withText("Scanning...")
+                .withResultListener(new MaterialBarcodeScanner.OnResultListener() {
+                    @Override
+                    public void onResult(Barcode barcode) {
+                        String[] rawData = barcode.displayValue.split(" +");
+                        String airline = rawData[2].substring(6, 8);
+                        String flightNum = airline+rawData[3].replaceFirst("^0*", "");;
+                        fetchInputDate(flightNum);
+                    }
+                })
+                .build();
+        materialBarcodeScanner.startScan();
+    }
+
+    private void fetchInputDate(final String flightNum) {
+
+        final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                MyTaskParams params = new MyTaskParams(flightNum, year, month, day);
+                new TicketScanner().execute(params);
+            }
+        };
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dialog = new DatePickerDialog(
+                ScanActivity.this,
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                mDateSetListener,
+                year,month,day);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 
     /**
@@ -41,38 +122,68 @@ public class ScanActivity extends AppCompatActivity {
      * option to save this plane into their personal "hanger".
      */
 
-    class TicketScanner extends AsyncTask<String, Void, String[]> {
+    class TicketScanner extends AsyncTask<MyTaskParams, String, String[]> {
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        TextView progressText = findViewById(R.id.progressText);
 
         @Override
         protected void onPreExecute() {
-            //TODO
-            //Will show something for the user while it's loading...
+            //Sets up the progress bar and text
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setMax(100);
+            progressText.setVisibility(View.VISIBLE);
+            progressText.setText("Searching...");
         }
 
         @Override
-        protected String[] doInBackground(String... args) {
+        protected String[] doInBackground(MyTaskParams... params) {
             try {
+                Log.d("Test","hello?");
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
-                String tempFlightNo = "nh1"; //***DELETE WHEN BARCODE WORKING
-                int[] tempDate = {2018,3,24}; //***DELETE WHEN BARCODE WORKING
+
+
+                String flightNo = params[0].flightNum;
+                int[] tempDate = {params[0].year,params[0].month,params[0].day};
+                Log.d("Test",flightNo);
+                Log.d("Test",Integer.toString(tempDate[0]));
+                Log.d("Test",Integer.toString(tempDate[1]));
+                Log.d("Test",Integer.toString(tempDate[2]));
+
                 //  First, find the tail #
-                String tailno = fetchTailNum(tempFlightNo, tempDate);
+                publishProgress("Fetching plane tail number...");
+                String tailno = fetchTailNum(flightNo, tempDate);
+                progressBar.setProgress(30);
+                Log.d("Test",tailno);
+                if(tailno==null) {
+                    return null;
+                }
                 // Second, find the plane model #
+                publishProgress("Fetching plane model...");
                 String modelno = fetchModelNum(tailno);
+                progressBar.setProgress(50);
                 // Third, find a picture of the plane
+                publishProgress("Fetching image of plane...");
                 String planeImg = fetchPlanePicture(tailno);
+                progressBar.setProgress(70);
                 //Finally, find if the plane was in an accident
+                publishProgress("Fetching any accident reports...");
                 String accidentDesc = fetchAccidentRepot(tailno);
+                progressBar.setProgress(90);
                 //Put into an array and send to post
+                publishProgress("Finishing...");
                 String[] planeData = {tailno, modelno, planeImg, accidentDesc};
+                progressBar.setProgress(100);
                 return planeData;
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                // If the web scrapper failed to find something...
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... args) {
+            progressText.setText(args[0]);
         }
 
         /**
@@ -82,7 +193,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Tail Number of the aircraft
          */
         protected String fetchTailNum(String flightNo, int[] date) throws IOException {
-            Log.d("Test","Fetching tail number...");
             LocalDate inputDate;
             if(date[1] < 10) {
                 inputDate = LocalDate.parse(Integer.toString(date[0])+"-0"+Integer.toString(date[1])+"-"+Integer.toString(date[2]));
@@ -109,7 +219,6 @@ public class ScanActivity extends AppCompatActivity {
                     LocalDate tempDate = fetchLocalDate(fetchedDate, fetchedTime, apc);
                     if (tempDate.equals(inputDate)) { //Change to input from barcode
                         String[] tempString = tds.get(4).text().split(" ");
-                        Log.d("Test","Found matching model on "+tempDate.toString());
                         return tempString[1];
                     }
                 }
@@ -125,7 +234,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Date in local time
          */
         protected LocalDate fetchLocalDate(LocalDate dateUTC, int timeUTC, String apc) throws IOException {
-            Log.d("Test","Getting local date...");
             LocalDate localDate = dateUTC;
             String sURL = "https://airports-api.s3-us-west-2.amazonaws.com/iata/"+apc.toLowerCase()+".json"; //just a string
 
@@ -143,13 +251,10 @@ public class ScanActivity extends AppCompatActivity {
             //Scale back the time and see if the date should stay the same, be set back or move forward
             int localTime = timeUTC + utcDiff;
             if(localTime<0) { //Go back a day
-                //Log.d("Test","Going back a day...");
                 localDate = localDate.minusDays(1);
             } else if(localTime>2400) { //Go forward a day
-                //Log.d("Test","Going forward a day...");
                 localDate.plusDays(1);
             } else { //Stay in the say day
-                //Log.d("Test","Same day...");
             }
             return localDate;
         }
@@ -160,7 +265,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Model number
          */
         protected String fetchModelNum(String tailno) throws IOException {
-            Log.d("Test","Fetching plane model...");
             Document planeModelSearch = Jsoup.connect("https://www.flightradar24.com/data/aircraft/"+tailno).get();
             return planeModelSearch.select("div#cnt-aircraft-info").select("span.details").get(0).text();
         }
@@ -171,7 +275,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return image URL in string format
          */
         protected String fetchPlanePicture(String tailNo) throws IOException {
-            Log.d("Test","Fetching plane image...");
             Document planeSpotSearch = Jsoup.connect("https://www.flightradar24.com/data/aircraft/"+tailNo).get();
             return planeSpotSearch.select("section#cnt-data-subpage").select("div.col-md-6.n-p").select("a").get(3).select("img").attr("src");
         }
@@ -182,7 +285,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Description of the accident (if there is one)
          */
         protected String fetchAccidentRepot(String tailno) throws IOException {
-            Log.d("Test","Fetching accident report...");
             Document doc3 = Jsoup.connect("https://en.wikipedia.org/w/index.php?search="+tailno+"&title=Special%3ASearch&fulltext=1").get();
             String firstResult = doc3.select("ul.mw-search-results").select("li").get(0).select("div.mw-search-result-heading").select("a").get(0).attr("abs:href");
             Document doc4 = Jsoup.connect(firstResult).get();
@@ -190,7 +292,13 @@ public class ScanActivity extends AppCompatActivity {
                 return "No previous accidents to report";
             } else {
                 if(doc4.select("table.infobox.vcard.vevent").select("tr").size()>13) {
-                    String registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(12).select("td").get(0).text();
+                    String registration;
+                    String accidentType = doc4.select("table.infobox.vcard.vevent").select("tr").get(1).select("th").text();
+                    if(accidentType.equals("Hijacking summary")) {
+                        registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(11).select("td").get(0).text().split("\\[")[0];
+                    } else {
+                        registration = doc4.select("table.infobox.vcard.vevent").select("tr").get(12).select("td").get(0).text().split("\\[")[0];
+                    }
                     if(registration.equals(tailno)) {
                         Elements accidentDesc = doc4.select("div.mw-parser-output");
                         StringBuilder sb = new StringBuilder();
@@ -213,26 +321,49 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] result)
         {
-            //Insert plane registration #
-            TextView v = findViewById(R.id.aircraftReg);
-            v.setText(result[0]);
-            //Insert plane model #
-            TextView v2 = findViewById(R.id.planeModel);
-            v2.setText(result[1]);
-            //Insert plane picture
-            ImageView iv = findViewById(R.id.planeImg);
-            InputStream is = null;
-            try {
-                is = new URL(result[2]).openStream();
-            } catch (IOException e) {
-                e.printStackTrace();
+            Log.d("Test","111"+result);
+            if(result==null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Message")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                           public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                builder.show();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+                progressText.setVisibility(View.INVISIBLE);
+                //Insert plane registration #
+                TextView v = findViewById(R.id.aircraftReg);
+                v.setText(result[0]);
+                //Insert plane model #
+                TextView v2 = findViewById(R.id.planeModel);
+                v2.setText(result[1]);
+                //Insert plane picture
+                ImageView iv = findViewById(R.id.planeImg);
+                InputStream is = null;
+                try {
+                    is = new URL(result[2]).openStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Bitmap planeImg = BitmapFactory.decodeStream(is);
+                iv.setImageBitmap(planeImg);
+                //Insert plane accident report (if there is one)
+                TextView v3 = findViewById(R.id.planeAccident);
+                v3.setText(result[3]);
             }
-            Bitmap planeImg = BitmapFactory.decodeStream(is);
-            iv.setImageBitmap(planeImg);
-            //Insert plane accident report (if there is one)
-            TextView v3 = findViewById(R.id.planeAccident);
-            v3.setText(result[3]);
         }
 
+    }
+
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.homebutton:
+                Intent m = new Intent(this, MainActivity.class);
+                startActivity(m);
+                break;
+        }
     }
 }

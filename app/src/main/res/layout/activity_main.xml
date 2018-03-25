@@ -94,6 +94,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.98"
         app:srcCompat="@drawable/home" />
+
+    <ImageView
+        android:id="@+id/MyHangar"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:background="@null"
+        android:scaleType="center"
+        app:srcCompat="@drawable/myhangar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
     <!-- end of bottom icon layout-->
 
 </android.support.constraint.ConstraintLayout>
