@@ -54,7 +54,7 @@ public class ScanActivity extends AppCompatActivity {
             try {
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
-                String tempFlightNo = "ke623"; //***DELETE WHEN BARCODE WORKING
+                String tempFlightNo = "nh1"; //***DELETE WHEN BARCODE WORKING
                 int[] tempDate = {2018,3,24}; //***DELETE WHEN BARCODE WORKING
                 //  First, find the tail #
                 String tailno = fetchTailNum(tempFlightNo, tempDate);
