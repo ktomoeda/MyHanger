@@ -7,7 +7,9 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -42,31 +44,47 @@ public class ScanActivity extends AppCompatActivity {
      * option to save this plane into their personal "hanger".
      */
 
-    class TicketScanner extends AsyncTask<String, Void, String[]> {
+    class TicketScanner extends AsyncTask<String, String, String[]> {
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        TextView progressText = findViewById(R.id.progressText);
 
         @Override
         protected void onPreExecute() {
-            //TODO
-            //Will show something for the user while it's loading...
+            //Sets up the progress bar and text
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setMax(100);
+            progressText.setVisibility(View.VISIBLE);
+            progressText.setText("Searching...");
         }
 
         @Override
         protected String[] doInBackground(String... args) {
             try {
+                Log.d("Test","0");
                 //  Main function for what occurs in the background. Scans ticket, retrieves needed
                 //information, then parses the web/database for needed information.
                 String tempFlightNo = "af65"; //***DELETE WHEN BARCODE WORKING
                 int[] tempDate = {2018,3,22}; //***DELETE WHEN BARCODE WORKING
                 //  First, find the tail #
+                publishProgress("Fetching plane tail number...");
                 String tailno = fetchTailNum(tempFlightNo, tempDate);
+                progressBar.setProgress(30);
                 // Second, find the plane model #
+                publishProgress("Fetching plane model...");
                 String modelno = fetchModelNum(tailno);
+                progressBar.setProgress(50);
                 // Third, find a picture of the plane
+                publishProgress("Fetching image of plane...");
                 String planeImg = fetchPlanePicture(tailno);
+                progressBar.setProgress(70);
                 //Finally, find if the plane was in an accident
+                publishProgress("Fetching any accident reports...");
                 String accidentDesc = fetchAccidentRepot(tailno);
+                progressBar.setProgress(90);
                 //Put into an array and send to post
+                publishProgress("Finishing...");
                 String[] planeData = {tailno, modelno, planeImg, accidentDesc};
+                progressBar.setProgress(100);
                 return planeData;
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -76,6 +94,11 @@ public class ScanActivity extends AppCompatActivity {
             return null;
         }
 
+        @Override
+        protected void onProgressUpdate(String... args) {
+            progressText.setText(args[0]);
+        }
+
         /**
          * Returns the tail number of the aircraft using the flight No & date
          * @param flightNo Flight Number for the trip
@@ -83,7 +106,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Tail Number of the aircraft
          */
         protected String fetchTailNum(String flightNo, int[] date) throws IOException {
-            Log.d("Test","Fetching tail number...");
             LocalDate inputDate;
             if(date[1] < 10) {
                 inputDate = LocalDate.parse(Integer.toString(date[0])+"-0"+Integer.toString(date[1])+"-"+Integer.toString(date[2]));
@@ -126,7 +148,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Date in local time
          */
         protected LocalDate fetchLocalDate(LocalDate dateUTC, int timeUTC, String apc) throws IOException {
-            Log.d("Test","Getting local date...");
             LocalDate localDate = dateUTC;
             String sURL = "https://airports-api.s3-us-west-2.amazonaws.com/iata/"+apc.toLowerCase()+".json"; //just a string
 
@@ -161,7 +182,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Model number
          */
         protected String fetchModelNum(String tailno) throws IOException {
-            Log.d("Test","Fetching plane model...");
             Document planeModelSearch = Jsoup.connect("https://www.flightradar24.com/data/aircraft/"+tailno).get();
             return planeModelSearch.select("div#cnt-aircraft-info").select("span.details").get(0).text();
         }
@@ -172,7 +192,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return image URL in string format
          */
         protected String fetchPlanePicture(String tailNo) throws IOException {
-            Log.d("Test","Fetching plane image...");
             Document planeSpotSearch = Jsoup.connect("https://www.flightradar24.com/data/aircraft/"+tailNo).get();
             return planeSpotSearch.select("section#cnt-data-subpage").select("div.col-md-6.n-p").select("a").get(3).select("img").attr("src");
         }
@@ -183,7 +202,6 @@ public class ScanActivity extends AppCompatActivity {
          * @return Description of the accident (if there is one)
          */
         protected String fetchAccidentRepot(String tailno) throws IOException {
-            Log.d("Test","Fetching accident report...");
             Document doc3 = Jsoup.connect("https://en.wikipedia.org/w/index.php?search="+tailno+"&title=Special%3ASearch&fulltext=1").get();
             String firstResult = doc3.select("ul.mw-search-results").select("li").get(0).select("div.mw-search-result-heading").select("a").get(0).attr("abs:href");
             Document doc4 = Jsoup.connect(firstResult).get();
@@ -214,6 +232,8 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] result)
         {
+            progressBar.setVisibility(View.INVISIBLE);
+            progressText.setVisibility(View.INVISIBLE);
             //Insert plane registration #
             TextView v = findViewById(R.id.aircraftReg);
             v.setText(result[0]);
